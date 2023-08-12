@@ -6,16 +6,7 @@
     <description>Recent content on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Aug 2023 08:42:05 -0700</lastBuildDate><atom:link href="https://captlevi0824.xyz/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Helloworld</title>
-      <link>https://captlevi0824.xyz/write-up/helloworld/</link>
-      <pubDate>Sat, 12 Aug 2023 08:42:05 -0700</pubDate>
-      
-      <guid>https://captlevi0824.xyz/write-up/helloworld/</guid>
-      <description></description>
-    </item>
-    
+    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://captlevi0824.xyz/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
       <link>https://captlevi0824.xyz/about/</link>
@@ -28,6 +19,15 @@ Welcome to Attack on Blog! I&amp;rsquo;m thrilled to kick off this platform and 
 the cornerstone of mastery, and that&amp;rsquo;s exactly what I&amp;rsquo;m diving into.
 This blog embodies a two-fold purpose that I&amp;rsquo;m excited about. First and foremost, it&amp;rsquo;s my personal
 journey towards sharpening my skills in ethical hacking and cybersecurity.</description>
+    </item>
+    
+    <item>
+      <title>Hello World!</title>
+      <link>https://captlevi0824.xyz/write-up/helloworld/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://captlevi0824.xyz/write-up/helloworld/</guid>
+      <description>&lt;p&gt;Test Test Test&lt;/p&gt;</description>
     </item>
     
     <item>
