@@ -1,0 +1,30 @@
+baseURL = 'https://captlevi0824.xyz/'
+languageCode = 'en-us'
+theme = "nightfall"
+
+[menu]
+  [[menu.header]]
+    name = "blog"
+    weight = 1
+    url = "blog"
+  [[menu.header]]
+    name = "write-ups"
+    weight = 2
+    url = "write-ups"  
+  [[menu.header]]
+    name = "about"
+    weight = 3
+    url = "about"
+
+[params]
+author = "Attack on Blog"
+user = "root"
+hostname = "captlevi0824.xyz"
+
+readingTime = true  # Show reading time on post page
+published = true  # Show published data on post page
+
+[[params.social]]
+key = 0
+name = "github"
+url = "https://github.com/gohugoio"
