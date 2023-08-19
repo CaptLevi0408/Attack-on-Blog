@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <title>
+Shoppy Write-up - Easy | Attack on Blog
+</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="generator" content="Hugo 0.117.0">
+
+
+<link rel="canonical" href="https://captlevi0824.xyz/write-up/shoppy/" >
+<link href="/sass/main.min.a8be33730f01e46b6e968a84ed6b211a9d1286d34f7e143c012da9c14cd56400.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+    <div class="flexWrapper">
+        <header class="headerWrapper">
+    <div class="header">
+        <div>
+            <a href="https://captlevi0824.xyz">
+                <span class="terminal">root@captlevi0824.xyz ~ $</span>
+            </a>
+        </div>
+        <input class="side-menu" type="checkbox" id="side-menu">
+        <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+        <nav class="headerLinks">
+            <ul>
+                
+                <li>
+                    <a href="https://captlevi0824.xyz/blog" title="" >
+                        ~/blog</a>
+                </li>
+                
+                <li>
+                    <a href="https://captlevi0824.xyz/write-ups" title="" >
+                        ~/write-ups</a>
+                </li>
+                
+                <li>
+                    <a href="https://captlevi0824.xyz/about" title="" >
+                        ~/about</a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="content">
+            <main class="main">
+                
+<div class="postWrapper">
+    <h1>Shoppy Write-up - Easy</h1>
+    
+    <section class="postMetadata">
+        <dl>
+            
+                
+<dt>tags</dt>
+<dd><span></span>
+    <a href="/tags/hackthebox/">#HackTheBox</a><span></span>
+    <a href="/tags/machines/">#Machines</a><span></span>
+    <a href="/tags/retired/">#Retired</a></dd>
+            
+            
+            
+            
+                <dt>published</dt>
+                
+                <dd><time datetime="2023-08-12">August 12, 2023</time></dd>
+            
+            
+                <dt>reading time</dt>
+                <dd>11 minutes</dd>
+            
+        </dl>
+    </section>
+    
+    <div>
+        <p>A remarkably comprehensive exposition on Shoppy from HackTheBox. This document will center its attention on specific segments of the Lockheed Martin Cyber Kill Chain.</p>
+<h1 id="a-write-up-on-shoppy-from-hackthebox"><strong>A Write-Up on &ldquo;Shoppy&rdquo; from HackTheBox</strong></h1>
+<p>By: CaptLevi0824</p>
+<p><img src="/images/Shoppy/Shoppy.png" alt="Alt Text"></p>
+<h2 id="description"><strong>Description</strong></h2>
+<p>&ldquo;Shoppy,&rdquo; a box found on HackTheBox (HTB), is thoughtfully categorized as an &ldquo;easy&rdquo; challenge, indicative of its manageable difficulty level. However, don&rsquo;t be deceived by its classification; while the challenge is accessible, it requires a versatile skill set encompassing various aspects of cybersecurity. Successfully seizing both the user and root flags demands a holistic approach, involving an array of techniques such as initial reconnaissance using nmap or preferred scanning tools, meticulous subdomain and directory enumeration through tools like gobuster and ffuf, adept utilization of SQL injection techniques, proficient handling of hash cracking tools like john the ripper and hashcat, a flair for privilege escalation strategies, and an adept command over fundamental Docker operations.
+As I meticulously detail my triumphs and strategies within the intricate landscape of Shoppy, I remind myself that my work serves a dual purpose. It&rsquo;s a canvas on which I capture my own growth, preserving each step of my journey towards mastery. Simultaneously, it transforms into a guiding compass for those embarking on their own adventures in the captivating realm of ethical hacking. This write-up transcends its title; it&rsquo;s a vehicle of knowledge-sharing, nurturing a spirit of collaboration and empowerment within our close-knit community.</p>
+<h2 id="reconnaissance"><strong>Reconnaissance</strong></h2>
+<p>The reconnaissance phase is of paramount importance when conducting penetration testing, as it forms the foundation for a successful assessment by providing invaluable knowledge and insights into the target system. By meticulously gathering information about the target, you can make informed decisions on the most effective approach to take, ensuring a more targeted and efficient penetration testing process.
+For instance, initiating the reconnaissance process with an NMAP scan is a common and effective practice. NMAP&rsquo;s port scanning capabilities allow you to identify open ports and services on the target system. This initial scan could reveal ports 80 and 443 as open, suggesting the presence of a web server or a web page hosted on the box. This insight enables you to hypothesize potential attack vectors and vulnerabilities that might be associated with the identified services.
+Beyond NMAP, employing other scanning tools such as Zenmap, Masscan, and Hping3 can provide additional perspectives and insights into the target&rsquo;s security posture. Zenmap, for instance, offers a graphical interface that can help visualize the network topology and relationships between systems. Masscan, on the other hand, excels in high-speed port scanning, potentially uncovering less common or hidden services. Hping3 enables you to perform more specialized scans, including advanced network testing and traceroute analysis.
+Transitioning from the context of Hack The Box (HTB) to the real world, the benefits of reconnaissance remain highly relevant and extend beyond just penetration testing:</p>
+<ul>
+<li><strong>Vulnerability Management</strong>: In a real-world scenario, organizations can utilize reconnaissance to proactively identify vulnerabilities in their own networks and systems. This aids in prioritizing and patching potential security gaps before malicious actors exploit them.</li>
+<li><strong>Threat Intelligence</strong>: Gathering information about potential threats and attack vectors can aid in developing effective strategies to defend against them. This could involve studying the tactics, techniques, and procedures (TTPs) of known threat actors.</li>
+<li><strong>Incident Response</strong>: During security incidents, having thorough knowledge of the compromised environment is crucial for effective incident response. Rapidly identifying the scope of an attack and the affected assets allows for a more precise and timely containment and recovery process.</li>
+<li><strong>Business Continuity</strong>: Understanding the critical assets and dependencies within a network helps organizations build resilient systems. This knowledge contributes to maintaining business continuity even in the face of cyber incidents.</li>
+<li><strong>Compliance and Auditing</strong>: Many industries are subject to regulatory compliance standards that mandate regular security assessments. Reconnaissance assists in preparing for audits by identifying potential vulnerabilities that could lead to non-compliance.</li>
+</ul>
+<p>In conclusion, the reconnaissance phase serves as the foundation for successful penetration testing, enabling testers to strategize and prioritize their efforts effectively. Moreover, these principles extend beyond simulated environments like HTB, proving invaluable in real-world security assessments and proactive defense strategies.</p>
+<h3 id="nmap"><strong>Nmap</strong></h3>
+<p><img src="/images/Shoppy/nmap_initial.png" alt="Alt Text"></p>
+<p>Embarking on the initial steps is always invigorating, and I often kickstart the process with a comprehensive TCP port scan. This approach yields valuable insights into the status of open and closed ports. As showcased in the earlier-provided screenshot, I observed the existence of three accessible ports. My next move involves a deeper dive into these ports through enumeration, aimed at extracting further information from them. For context, I&rsquo;d like to present a breakdown of the nmap command that I skillfully employed:</p>
+<ul>
+<li><strong>-p</strong> flag is employed to specify the ports I want nmap to scan. The clever addition of a trailing hyphen after -p signals to nmap the intention to scan across all 65,535 ports.</li>
+<li><strong>-n</strong> flag instructs nmap to bypass DNS resolution. While this might not be strictly necessary when scanning IP addresses instead of domains like &ldquo;example.com,&rdquo; I habitually include it for consistency.</li>
+<li><strong>&ndash;disable-arp-ping</strong> flag is a crucial inclusion, signaling nmap to deactivate ARP (Address Resolution Protocol) or IPv6 Neighbor Discovery.</li>
+<li><strong>&ndash;min-rate</strong> flag empowers me to dictate the pace of packet transmission to nmap. In this scenario, nmap is configured to unleash a rapid flow of up to 10,000 packets per second, allowing for efficient scanning.</li>
+<li><strong>-oN</strong> flag governs the output format of the scan. I&rsquo;ve aptly labeled this particular scan as &ldquo;nmap_initial.&rdquo;</li>
+</ul>
+<p>However, it&rsquo;s important to emphasize the value of conducting diverse scans with each new box initiated on HTB. This practice provides an opportunity to expand your knowledge and familiarity with various scanning techniques. Different boxes can present unique challenges and configurations, so experimenting with alternate scan types offers a chance to gain insights into how different tools and methodologies interact with the target system. By incorporating varied scans, such as UDP scans, stealth scans, or version detection scans, you enhance your proficiency and adaptability in uncovering potential vulnerabilities and understanding the target&rsquo;s network layout. In the ever-evolving landscape of ethical hacking, versatility is a key asset, and the practice of employing different scans enriches your toolkit and skill set for tackling a wide range of scenarios effectively.</p>
+<p><img src="/images/Shoppy/nmap_version.png" alt="Alt Text"></p>
+<p>To delve deeper into the open ports discovered during the initial scan, I chose to perform a version scan, aiming to precisely ascertain the services active on the system. As evidenced in the previously provided visual depiction, port 22 is serving OpenSSH version 8.4p1, port 80 is an HTTP port hosting nginx version 1.23.1, and port 9093 appears to be associated with a service labeled &ldquo;copycat.&rdquo;</p>
+<p>At this phase of the procedure, my standard approach involves halting the Nmap scans temporarily and transitioning to a more detailed enumeration of the identified ports. The ensuing steps encompass endeavors like establishing an SSH connection to the machine and delving into the content accessible via the URL http://10.129.227.233:80.</p>
+<p>Below, I present an in-depth dissection of the Nmap command that I utilized for this specific scan:</p>
+<ul>
+<li><strong>-sV</strong>: This flag directs nmap to initiate probes on open ports to gather information about services and their respective versions.</li>
+<li><strong>-p</strong>: Employing this flag, I specified the ports I wished to scan, focusing on ports 22, 80, and 9093 in this instance.</li>
+<li><strong>&ndash;min-rate</strong>: This flag empowers nmap to dispatch packets at a pace determined by the user. In this scenario, nmap was set to transmit up to 5,000 packets per second.</li>
+<li><strong>-oN</strong>: By employing this flag, I instructed nmap to generate the scan output in a standard format. I aptly named this scan &ldquo;nmap_version.&rdquo;</li>
+</ul>
+<p>To further enhance the comprehensiveness of the scan and capture even more nuanced information, you might consider the inclusion of additional flags:</p>
+<ul>
+<li><strong>-A</strong>: Enables aggressive mode, encompassing OS detection, version detection, script scanning, and traceroute.</li>
+<li><strong>&ndash;script</strong>: This allows you to specify scripts to run against the target, potentially uncovering specific vulnerabilities or information.</li>
+<li><strong>-O</strong>: Requests nmap to attempt OS detection, aiding in the identification of the target system&rsquo;s operating system.</li>
+</ul>
+<p>By judiciously incorporating these flags and adjusting the command based on the specific requirements of each target, you can expand your reconnaissance capabilities, gaining a more holistic understanding of the system&rsquo;s architecture and potential security weaknesses.</p>
+<h3 id="ssh-banner-grabbing-on-port-22"><strong>SSH Banner Grabbing on Port 22</strong></h3>
+<p>In the context of ethical hacking and penetration testing, banner grabbing is used as a technique to gather information about the target system. This information assists in building a comprehensive understanding of the target&rsquo;s technology stack, which is essential for identifying potential vulnerabilities, weaknesses, and points of entry.
+Banner grabbing is typically employed during the reconnaissance phase of an attack, which involves collecting as much information as possible about the target without directly interacting with it. This phase sets the groundwork for the subsequent steps in an attack, helping the attacker make informed decisions about the most suitable techniques to use.
+By extracting banners, an attacker can identify:</p>
+<ul>
+<li><strong>Software Versions</strong>: Information about the version numbers of software applications, services, and even operating systems. This aids in identifying known vulnerabilities associated with specific versions.</li>
+<li><strong>Service Details</strong>: Configurations and settings of services, protocols, and applications, which can offer insights into potential security flaws or misconfigurations.</li>
+<li><strong>Operating System</strong>: Sometimes, banners can provide clues about the underlying operating system, which assists attackers in tailoring their strategies based on OS-specific vulnerabilities.</li>
+<li><strong>Custom Information</strong>: Banners might contain custom messages set by administrators or developers, offering hints about the target organization&rsquo;s structure or internal practices.</li>
+</ul>
+<p><img src="/images/Shoppy/ssh_initial.png" alt="Alt Text"></p>
+<p>In this phase, I initiate a connection to SSH port 22 with the intention of retrieving a banner. This banner serves as a window, allowing me to gain insights into the system&rsquo;s characteristics and potential vulnerabilities, shaping my approach for deeper exploration. As evident, I didn&rsquo;t receive a welcoming or friendly banner message.</p>
+<h3 id="exploring-port-80-on-the-host-enumeration-and-insights"><strong>Exploring Port 80 on the Host: Enumeration and Insights</strong></h3>
+<p><img src="/images/Shoppy/http_error.png" alt="Alt Text"></p>
+<p>When attempting to access the webpage, I faced an error. To resolve this issue, I needed to include &ldquo;shoppy.htb&rdquo; in the &ldquo;/etc/hosts&rdquo; file on the system. This addition would enable the system to correctly associate the domain with its corresponding IP address. To achieve this, I used the command <strong>&ldquo;echo shoppy.htb {ip} | sudo tee -a /etc/hosts.&rdquo;</strong> The command echoed the domain and IP address into tee, which then appended the entry to the &ldquo;/etc/hosts&rdquo; file with administrative privileges. This adjustment ensured smooth access to the webpage by allowing the system to resolve the domain accurately.</p>
+<p>Command Breakdown:</p>
+<ul>
+<li><strong>echo</strong>: Outputs the specified text.</li>
+<li><strong>shoppy.htb</strong>: The domain entry to be added.</li>
+<li><strong>{ip}</strong>: Placeholder for the actual IP address. Do not require the brackets.</li>
+<li><strong>|</strong>: Redirects output to another command.</li>
+<li><strong>sudo</strong>: Executes the following command with administrative privileges.</li>
+<li><strong>tee</strong>: Reads input and writes it to both standard output and files.</li>
+<li><strong>-a</strong>: Appends output to the file.</li>
+<li><strong>/etc/hosts</strong>: The target file where hostname-to-IP mappings are stored.</li>
+</ul>
+<p><img src="/images/Shoppy/http_hosts.png" alt="Alt Text"></p>
+<p>Now that I&rsquo;m on the webpage, I&rsquo;m all set to kickstart the website enumeration process!</p>
+<p>While closely examining the webpage, a striking message captures my immediate attention: &ldquo;Shoppy beta coming soon! Stay tuned for the beta access!&rdquo; This message hints at the possibility of undiscovered treasures lying beneath the surface—subdomains or concealed directories awaiting exploration.</p>
+<p>To enrich my exploration, I&rsquo;ll employ various techniques. Firstly, I&rsquo;ll dive into the webpage&rsquo;s source code, inspecting it for any hidden comments, links, or JavaScript code that might reveal valuable information. For instance, using the browser&rsquo;s &ldquo;View Page Source&rdquo; option or inspecting elements can unveil insights that might not be visible on the rendered page.</p>
+<p>Furthermore, I&rsquo;ll leverage browser developer tools to scrutinize the elements closely. By right-clicking on specific elements and selecting &ldquo;Inspect,&rdquo; I can unveil underlying HTML structures and even modify content temporarily to see if there&rsquo;s hidden content or links.</p>
+<p>Incorporating these methods will help me establish a comprehensive understanding of the webpage&rsquo;s architecture, identify potential vulnerabilities, and possibly unveil additional avenues for exploration.</p>
+<p><img src="/images/Shoppy/gobuster_sub.png" alt="Alt Text"></p>
+<p>The provided image confirms our successful discovery of a subdomain. Notably, our success was facilitated by employing an alternative wordlist, specifically the &ldquo;bitquark-subdomains-top100000.txt&rdquo; list from &ldquo;/usr/share/seclists/Discovery/DNS/&rdquo;. This choice proved instrumental in uncovering the subdomain. Furthermore, we enhanced this process by incorporating the term &ldquo;mattermost&rdquo; into the aforementioned wordlist, which was previously illustrated.</p>
+<p>A breakdown of the command executed during this operation is as follows:</p>
+<ul>
+<li>The <strong>&ldquo;vhost&rdquo;</strong> mode in Gobuster is particularly useful for performing virtual host-based directory and file brute-forcing. It accomplishes this by appending the target domain to each request, effectively simulating access to various subdomains on the same target.</li>
+<li>The <strong>&quot;-u&quot;</strong> flag designates the target URL for Gobuster&rsquo;s scanning activity. In this instance, the target is &ldquo;<a href="http://shoppy.htb">http://shoppy.htb</a>,&rdquo; representing the domain or IP address of our target website.</li>
+<li>The <strong>&quot;-w&quot;</strong> flag is pivotal in specifying the wordlist file to be utilized for the brute-force attack. In our command, we referenced the &ldquo;subdomains-top1million-5000.txt&rdquo; wordlist, located at &ldquo;/usr/share/seclists/Discovery/DNS/&rdquo;. This wordlist contains a comprehensive compilation of potential directory and file names that Gobuster will systematically attempt to access on the target site.</li>
+<li>The <strong>&quot;&ndash;append-domain&quot;</strong> flag is unique to Gobuster&rsquo;s &ldquo;vhost&rdquo; mode and serves the crucial role of appending the target domain name to each request. This step is indispensable for the virtual host-based enumeration technique, enabling Gobuster to effectively simulate interactions with distinct subdomains under the same target domain.</li>
+</ul>
+<p>By incorporating these elements, we efficiently executed the subdomain discovery process.</p>
+<!-- raw HTML omitted -->
+    </div>
+</div>
+
+            </main>
+        </div>
+
+
+        <footer class="footer">
+    
+        <span>
+            © 2023 Attack on Blog, Built with
+            <a href="https://gohugo.io" class="footerLink">Hugo</a> and
+            <a href="https://github.com/LordMathis/hugo-theme-nightfall" class="footerLink">Nightfall</a> theme
+        </span>
+    
+</footer>
+    </div>
+
+</body>
+
+</html>
