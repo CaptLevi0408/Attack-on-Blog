@@ -80,13 +80,13 @@ Shoppy Write-up - Easy | Attack on Blog
             
             
                 <dt>reading time</dt>
-                <dd>11 minutes</dd>
+                <dd>22 minutes</dd>
             
         </dl>
     </section>
     
     <div>
-        <p>A remarkably comprehensive exposition on Shoppy from HackTheBox. This document will center its attention on specific segments of the Lockheed Martin Cyber Kill Chain.</p>
+        <p>A remarkably comprehensive exposition on Shoppy from HackTheBox.</p>
 <h1 id="a-write-up-on-shoppy-from-hackthebox"><strong>A Write-Up on &ldquo;Shoppy&rdquo; from HackTheBox</strong></h1>
 <p>By: CaptLevi0824</p>
 <p><img src="/images/Shoppy/Shoppy.png" alt="Alt Text"></p>
@@ -176,7 +176,90 @@ By extracting banners, an attacker can identify:</p>
 <li>The <strong>&quot;&ndash;append-domain&quot;</strong> flag is unique to Gobuster&rsquo;s &ldquo;vhost&rdquo; mode and serves the crucial role of appending the target domain name to each request. This step is indispensable for the virtual host-based enumeration technique, enabling Gobuster to effectively simulate interactions with distinct subdomains under the same target domain.</li>
 </ul>
 <p>By incorporating these elements, we efficiently executed the subdomain discovery process.</p>
-<!-- raw HTML omitted -->
+<p><img src="/images/Shoppy/mattermost2.png" alt="Alt Text"></p>
+<p>After adding the entry &ldquo;mattermost.shoppy.htb&rdquo; to our &ldquo;/etc/hosts&rdquo; file, I successfully accessed the &ldquo;mattermost&rdquo; subdomain, which led me to a login screen. As I currently do not possess the required credentials, it is a prudent approach to consider alternative enumeration strategies. One such approach involves delving into directory exploration and harnessing the capabilities of Gobuster to assist in this endeavor. This multi-pronged strategy aims to broaden our scope of investigation and potentially uncover valuable paths or information that might not be immediately apparent.</p>
+<p><img src="/images/Shoppy/gobuster_dir.png" alt="Alt Text"></p>
+<p>The visual information at hand clearly demonstrates Gobuster&rsquo;s successful identification of several directories, some of which exhibit promising attributes, deserving of more comprehensive exploration. A comprehensive breakdown of the executed command for this investigative process is presented below:</p>
+<ul>
+<li>The <strong>&ldquo;dir&rdquo;</strong> flag is judiciously utilized to denote Gobuster&rsquo;s operational mode as &ldquo;directory,&rdquo; signifying its intent to undertake directory-based brute-forcing.</li>
+<li>The <strong>&quot;-u&quot;</strong> flag serves as a directive, pinpointing the focal point of the enumeration. In this scenario, the target URL is precisely specified as &ldquo;<a href="http://shoppy.htb">http://shoppy.htb</a>,&rdquo; constituting the website&rsquo;s domain or IP address under scrutiny.</li>
+<li>The <strong>&quot;-w&quot;</strong> flag comes into play, designating the chosen wordlist file to be employed during the brute-force endeavor. In particular, the &ldquo;common.txt&rdquo; wordlist is summoned from the location &ldquo;/usr/share/wordlists/dirb/.&rdquo; This carefully curated wordlist contains an array of potential directory and file appellations. Gobuster employs this comprehensive list to systematically attempt to access these resources on the target website, unveiling pathways that may otherwise remain obscured.</li>
+</ul>
+<p>By orchestrating this nuanced sequence of directives, we effectively deploy Gobuster&rsquo;s capabilities to unearth a variety of directories, with select options displaying conspicuous potential. This methodical approach extends our reach into the target domain, revealing avenues of interest that merit further exploration.</p>
+<p><img src="/images/Shoppy/shoppy_login.png" alt="Alt Text"></p>
+<p>The findings derived from the Gobuster scan unmistakably indicate that accessing the &ldquo;/admin&rdquo; directory triggers a subsequent redirection to the &ldquo;/login&rdquo; page. Upon navigating to this &ldquo;/login&rdquo; directory, we are promptly met with a login interface, which presents an intriguing opening for scrutinizing potential vulnerabilities, particularly those pertaining to SQL injection. This circumstance piques our curiosity and prompts us to consider conducting a systematic evaluation to ascertain the presence of any exploitable SQL injection weaknesses within the login mechanism.</p>
+<p><img src="/images/Shoppy/shoppy_login_admin.png" alt="Alt Text"></p>
+<p>As depicted in the provided image, my current approach involves attempting to log in by utilizing the payload &ldquo;admin&rsquo; || &lsquo;1==1&rdquo;. The rationale behind employing this specific payload lies in its potential to exploit SQL injection (SQLi) vulnerabilities present within the target system. Successful execution of this payload would effectively indicate the susceptibility of the target to SQL injection, subsequently providing unauthorized access to the login mechanism. Let&rsquo;s delve into a comprehensive breakdown of the payload&rsquo;s components and the underlying mechanics of this attack:</p>
+<ul>
+<li><strong>&ldquo;admin&rdquo;</strong>: This portion of the payload is a standard username that one would typically employ to log into the website&rsquo;s authentication system.</li>
+<li><strong>&quot;||&quot; (Double Pipe)</strong>: The double pipe is a recognized SQL syntax element used to denote a logical OR condition within SQL queries.</li>
+<li><strong>&ldquo;1==1&rdquo;</strong>: This statement signifies a simple condition within SQL that evaluates to true. The expression &ldquo;1==1&rdquo; is a logical truism in SQL, ensuring that the condition always holds true.</li>
+</ul>
+<p>In SQL injection attacks, the goal is to manipulate the input fields in such a way that the underlying SQL queries are altered to execute unintended actions. By appending the payload &ldquo;admin&rsquo; || &lsquo;1==1&rdquo; to the username field during the login attempt, we are effectively crafting an injected SQL query like this:</p>
+<p><code>SELECT * FROM users WHERE username = 'admin' || '1==1' AND password = '...'</code></p>
+<p>In this query, the logical OR condition &ldquo;1==1&rdquo; ensures that the overall condition evaluates to true, bypassing the password check entirely. As a result, the authentication process is effectively circumvented, granting us access to the login interface without requiring a valid password.</p>
+<p>This attack capitalizes on poor input validation and inadequate handling of user inputs within the SQL query, effectively manipulating the query&rsquo;s logic to achieve unauthorized access. It underscores the importance of robust input validation and secure coding practices to prevent such vulnerabilities from being exploited.</p>
+<p><img src="/images/Shoppy/logged_in.png" alt="Alt Text"></p>
+<p>Triumph! During our thorough exploration of the page&rsquo;s elements, we&rsquo;ve discerned that the sole viable option at our disposal is to delve into the functionality provided by the &ldquo;Search for users&rdquo; button. In light of this revelation, my next course of action involves injecting the same payload that proved successful during the login phase into the search field. By executing this step, I aim to meticulously observe the ensuing outcome and glean insights into the system&rsquo;s behavior and potential vulnerabilities. This methodical approach allows us to uncover any latent security weaknesses that could be exploited to our advantage.</p>
+<p><img src="/images/Shoppy/hashes.png" alt="Alt Text"></p>
+<p>Following the search query input of &ldquo;admin&rsquo; || &lsquo;1==1&rdquo;, a significant breakthrough ensued. The result of this search effort led to the successful retrieval of a page containing a pair of password hashes. Subsequently, a redirection directed me towards a page titled &ldquo;/exports/export-search.json,&rdquo; where an additional pair of password hashes were exposed. In a strategic move to ensure the retention of these critical hashes, the decision was made to safeguard them by saving them within a text file.</p>
+<p>With the hashes secured, the next logical step revolves around harnessing the capabilities of the &ldquo;John&rdquo; tool. By leveraging this potent tool, we can initiate a systematic cracking attempt aimed at deciphering the passwords behind the hashes. This methodical approach holds the potential to unveil the original passwords, thereby granting us access to valuable information and potentially furthering our progression through the system&rsquo;s defenses.</p>
+<p><img src="/images/Shoppy/john_failed.png" alt="Alt Text"></p>
+<p>As illustrated in the accompanying image, my endeavor to unveil the password through the execution of the command &ldquo;john &ndash;wordlist=/usr/share/wordlists/rockyou.txt hash&rdquo; yielded no success. Nonetheless, upon scrutinizing the output provided by the &ldquo;John&rdquo; tool, an intriguing proposition emerged—a suggestion to explore the utilization of a &ldquo;format&rdquo; option.</p>
+<p>In anticipation of a more positive outcome, I intend to offer an exhaustive breakdown of the command outlined above once the cracking process achieves its goal. This meticulous approach aligns with the intent of maximizing our comprehension of the operation and its outcomes, enabling us to draw valuable insights from the experience and refine our techniques for future endeavors.</p>
+<p><img src="/images/Shoppy/HI_admin.png" alt="Alt Text"></p>
+<p><img src="/images/Shoppy/HI_josh.png" alt="Alt Text"></p>
+<p>After analyzing the information found on both images, I arrived at the decision to experiment with the “Raw-MD5” format option.</p>
+<p><img src="/images/Shoppy/Cracked_hash.png" alt="Alt Text"></p>
+<p>Triumphantly, our persistence has borne fruit as we successfully managed to crack one of the previously enigmatic hashes, unveiling a password of significant value. In light of this achievement, allow me to provide an intricate dissection of the command that underpinned our accomplishment:</p>
+<ul>
+<li><strong>&ndash;wordlist=</strong>: This indispensable component of the command serves as a vehicle for specifying the precise path and filename of a text file harboring a comprehensive assortment of words, aptly known as a &ldquo;wordlist&rdquo; or &ldquo;dictionary.&rdquo; This carefully curated list functions as a repository of potential passwords that the &ldquo;John&rdquo; tool systematically employs to undertake the task of cracking the targeted password hash. In our strategic maneuver, I opted for the rockyou.txt wordlist—a renowned entity within cybersecurity circles, stemming from a notorious data breach in 2009.</li>
+<li><strong>hash</strong>: The pivotal file that holds within it the previously enigmatic hashed passwords, enabling the &ldquo;John&rdquo; tool to deploy its arsenal of techniques to unravel their concealed contents.</li>
+<li><strong>&ndash;format=</strong>: This option emerges as a linchpin in the command structure, steering our effort toward successful password cracking. Through this mechanism, we explicitly specify the format of the password hashes destined for decryption. The diverse array of systems and applications adopt varying methods to hash and store passwords. Hence, equipping &ldquo;John&rdquo; with the correct format is pivotal to deploying tailored cracking strategies. In our context, the &ldquo;Raw-MD5&rdquo; format was judiciously chosen, a decision informed by insights gleaned from &ldquo;hash-identifier,&rdquo; a tool adept at discerning hash types.</li>
+</ul>
+<p>By navigating this intricate command orchestration, we expertly harnessed the potential of &ldquo;John&rdquo; and the carefully selected tools at our disposal. This concerted effort culminated in our acquisition of a password— a key that opens doors to further exploration and deeper penetration of the system&rsquo;s defenses.</p>
+<p><img src="/images/Shoppy/josh_mattermost.png" alt="Alt Text"></p>
+<p>I was successfully able to login to the “mattermost” subdomain with Josh’s credentials. Now to investigate what we can accomplish with these credentials.</p>
+<p><img src="/images/Shoppy/jaeger_pw.png" alt="Alt Text"></p>
+<p>As evident from the image above, I discovered messages exchanged between Josh and another user, “Jaeger.” For some inexplicable reason, Josh decided to send Jaeger’s username and password through a message. Armed with Jaeger’s credentials, we now have an opportunity to attempt accessing SSH and potentially gain a foothold!</p>
+<p><img src="/images/Shoppy/ssh_login.png" alt="Alt Text"></p>
+<p>Success! I have gained access! Now, it’s time to perform enumeration and explore the possibilities available to us while logged in as the user Jaeger.</p>
+<p>Note: Now, the “user.txt” flag is accessible to us in Jaeger’s home directory.</p>
+<p><img src="/images/Shoppy/messages.png" alt="Alt Text"></p>
+<p>Based on the contents of this message, it appears that Josh is informing Jaeger about creating a password manager and offering to test it if Jaeger is interested. Well, I’m certainly eager to give it a try!</p>
+<p><img src="/images/Shoppy/PW_manager.png" alt="Alt Text"></p>
+<p>Attempting to use Jaeger’s password to authenticate did not work out. Looks like the password-manager is asking for a master password, which we do not know.</p>
+<p><img src="/images/Shoppy/http_server.png" alt="Alt Text"></p>
+<p><img src="/images/Shoppy/wget_ghidra.png" alt="Alt Text"></p>
+<p>Evident in the presented visuals, I initiated the process by establishing an HTTP server using Python. Subsequently, I executed the &ldquo;wget&rdquo; command to facilitate the seamless transfer of files from the remote source to my attack environment. With these essential preparations underway, I embarked on the subsequent phases of the operation.</p>
+<p>Installing the sophisticated tool &ldquo;Ghidra&rdquo; marked a pivotal turning point. This powerful tool empowers reverse engineering endeavors, allowing for an in-depth dissection of the password manager binary&rsquo;s intricate workings. The primary objective here is to gain insight into the source code of the binary, unraveling its underlying logic, algorithms, and security mechanisms.</p>
+<p>The step-by-step breakdown of the procedure is as follows:</p>
+<ul>
+<li><strong>Starting an HTTP Server</strong>: The process commenced by deploying a Python-based HTTP server. This server setup serves as a conduit for sharing files from the attacker&rsquo;s machine to the targeted system.</li>
+<li><strong>Utilizing &ldquo;wget&rdquo; for File Retrieval</strong>: By employing the &ldquo;wget&rdquo; command, the chosen files were seamlessly fetched from the remote HTTP server. This file transfer mechanism ensures the files are readily accessible and poised for further analysis.</li>
+<li><strong>Ghidra Installation and Reverse Engineering</strong>: A significant progression unfolded with the installation of &ldquo;Ghidra,&rdquo; a formidable tool designed to facilitate reverse engineering. This involves scrutinizing the binary&rsquo;s assembly code, data structures, and high-level language representations, providing invaluable insights into the binary&rsquo;s functionality.</li>
+</ul>
+<p>The aim of this multifaceted endeavor is to unveil the inner workings of the password manager&rsquo;s binary code. By dissecting the source code, we unravel the blueprint that underpins its operation—illuminating pathways, vulnerabilities, and potential avenues for manipulation. The ultimate goal is to harness this comprehension for strategic exploitation, bolstering our capabilities in penetrating the system&rsquo;s defenses and gaining the upper hand in the security landscape.</p>
+<p><img src="/images/Shoppy/ghidra_master.png" alt="Image Alt Text"></p>
+<p>Looking at the screenshot above, I opened Ghidra by typing in “ghidra”, and loaded up the password-manager to begin reverse engineering.</p>
+<p>From analyzing the code, it becomes evident that the master password we provided is stored in the string variable local_48 on lines 15 to 18. Additionally, there is a comparison operation on local_48 at line 37, and lines 25 to 36 show the step-by-step construction of a string character by character, which resolves to &ldquo;Sample.&rdquo; This implies that &ldquo;Sample&rdquo; is indeed the master password.</p>
+<p><img src="/images/Shoppy/deploy_creds.png" alt="Alt Text"></p>
+<p>Using the master password “Sample” in the password manager application allows us to gain access, and we receive a set of credentials for the user “deploy.”</p>
+<p><img src="/images/Shoppy/deploy_ssh.png" alt="Alt Text"></p>
+<p>In the current phase of exploration, it becomes evident that the deploy user account boasts the privilege to execute Docker commands. Building upon this revelation, I embark on the next step of my journey by invoking the &ldquo;docker images&rdquo; command. This command furnishes a comprehensive roster of Docker images resident within the system&rsquo;s framework.</p>
+<p>Docker images function as the fundamental building blocks of Docker containers, encapsulating a self-contained, lightweight, and self-sufficient ensemble of software components. Each image is a self-sustained unit, meticulously housing all the requisite constituents vital for launching an application. This all-inclusive encapsulation encompasses not only the application&rsquo;s code but also its runtime environment, libraries, dependencies, and essential system tools.</p>
+<p>This strategic maneuver grants us an invaluable insight into the system&rsquo;s software landscape. By perusing the list of available Docker images, we acquire a holistic overview of the tools, applications, and resources accessible within the Docker ecosystem. This newfound understanding paves the way for informed decisions and tactical choices, propelling us towards the successful navigation of the system&rsquo;s intricacies and the realization of our overarching objectives.</p>
+<p><img src="/images/Shoppy/docker_images.png" alt="Alt Text"></p>
+<p>As I delved into the realm of Docker privilege escalation, my research led me to stumble upon a website housing a potentially valuable experimentation command. The original command caught my attention: &ldquo;docker run &ndash;rm -it -v /:/host ubuntu bash.&rdquo; Recognizing its promise, a unique idea sparked in my mind, prompting me to refine and adapt the command to align with my objectives.</p>
+<p>With this in mind, I decided to modify the command to &ldquo;docker run -v /root:/mnt -it alpine.&rdquo; This revised command was carefully crafted to achieve a specific purpose. The goal was to launch an Alpine Linux container that would incorporate a mechanism to seamlessly mount the host system&rsquo;s &ldquo;root&rdquo; directory onto the designated &ldquo;mnt&rdquo; directory within the container itself.</p>
+<p>Envisioning this configuration as a potential game-changer, I anticipated that it could provide me with an opportunity to directly engage with the host system&rsquo;s &ldquo;root&rdquo; directory from within the bounds of the Alpine container. This setup would potentially grant me access to and control over the files within the host&rsquo;s &ldquo;root&rdquo; directory, offering a valuable means to glean insights and potentially execute strategic actions.</p>
+<p>This modification was a testament to my resourcefulness, showcasing an inventive approach to Docker privilege escalation. It presented a promising route to unravel the intricacies of this domain and explore avenues for meaningful interaction and manipulation.</p>
+<p><img src="/images/Shoppy/root.png" alt="Alt Text"></p>
+<p>Success! We have gained root access inside the Docker image. If you recall where the previous command mounted the “/root” directory, you can use the cat command to read the contents of the &ldquo;root.txt&rdquo; file.</p>
+<p><img src="/images/Shoppy/roottxt.png" alt="Alt Text"></p>
+<p>And there you have it!</p>
+<p>I&rsquo;m confident that this walkthrough has been an engaging and informative journey for those who have followed along. My intention was to offer thorough explanations, catering to individuals who might be new to this realm. Throughout this guide, I aimed to foster a deeper comprehension by leaving no stone unturned. HackTheBox stands out as an exceptional learning platform, and I strongly advocate for a shift in mindset—prioritizing the acquisition of skills to conquer challenges rather than merely chasing after flags.</p>
+<p>By dedicating yourself to mastering these skills, you embark on a path that leads to not only successful flag acquisition but also a genuine understanding of the intricacies at play. This philosophy embraces the joy of learning and the thrill of ethical hacking. So, here&rsquo;s to continuous learning, joyful exploration, and the excitement of ethical hacking! Happy learning and may your hacking adventures be filled with success and knowledge!</p>
     </div>
 </div>
 
